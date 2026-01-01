@@ -18,7 +18,7 @@
 
 用法示例：
 python model_downloader.py \
-  --root_dir "D:/ShunyuModels" \
+--root_dir "./models" \
   --items '{"items":[{"item":"asr","model_id":"damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch","revision":"v2.0.4"}]}'
 
 说明：

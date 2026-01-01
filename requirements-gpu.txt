@@ -1,21 +1,23 @@
 # ============================================================================
-# VoiceInk ASR - Python 依赖列表 (CPU 版本)
+# VoiceInk ASR - Python 依赖列表 (GPU 版本)
 # Python 版本: 3.10
+# CUDA 版本: 11.8 或 12.x
 # ============================================================================
 
 # --------------------------------------------------------------------------
 # 核心 ASR 依赖
 # --------------------------------------------------------------------------
-# ONNX Runtime (用于 SenseVoice ONNX 模型)
-onnxruntime==1.23.2
+# ONNX Runtime GPU 版本
+onnxruntime-gpu==1.23.2
 
 # FunASR / Paraformer (备选模型)
 funasr==1.2.9
 funasr-onnx==0.4.1
 
-# PyTorch (funasr/paraformer 需要)
-torch==2.5.1+cpu
-torchaudio==2.5.1+cpu
+# PyTorch GPU 版本 (CUDA 11.8)
+# 如果使用 CUDA 12.x，请改用: torch==2.5.1+cu121
+torch==2.5.1+cu118
+torchaudio==2.5.1+cu118
 
 # --------------------------------------------------------------------------
 # 语音处理管线
@@ -61,6 +63,13 @@ aliyun-python-sdk-core==2.16.0
 oss2==2.19.1
 
 # ============================================================================
-# 安装命令:
-# pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+# 安装命令 (CUDA 11.8):
+# pip install -r requirements-gpu.txt --extra-index-url https://download.pytorch.org/whl/cu118
+#
+# 安装命令 (CUDA 12.1):
+# 先修改 torch/torchaudio 版本为 +cu121，然后运行:
+# pip install -r requirements-gpu.txt --extra-index-url https://download.pytorch.org/whl/cu121
+#
+# 验证 GPU:
+# python -c "import torch; print(torch.cuda.is_available())"
 # ============================================================================
