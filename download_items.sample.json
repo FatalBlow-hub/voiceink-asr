@@ -1,0 +1,19 @@
+{
+  "items": [
+    {
+      "item": "asr",
+      "model_id": "damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch",
+      "revision": "v2.0.4"
+    },
+    {
+      "item": "vad",
+      "model_id": "damo/speech_fsmn_vad_zh-cn-16k-common-pytorch",
+      "revision": "v2.0.4"
+    },
+    {
+      "item": "punc",
+      "model_id": "damo/punc_ct-transformer_zh-cn-common-vocab272727-pytorch",
+      "revision": "v2.0.4"
+    }
+  ]
+}
