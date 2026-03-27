@@ -161,6 +161,26 @@ class FasterWhisperAdapter(ASRModel):
         return ASRResult(text=text, segments=result_segments)
 
 
+class FunAsrNano2512Adapter(ASRModel):
+    """Fun-ASR-Nano-2512 模型适配器（2025 最新版，自带 VAD/PUNC）。"""
+
+    def __init__(self, model_wrapper: Dict[str, Any]):
+        self._wrapper = model_wrapper
+
+    @property
+    def model_id(self) -> str:
+        return "fun-asr-nano-2512"
+
+    @property
+    def capabilities(self) -> ModelCapabilities:
+        return MODEL_CAPABILITIES["fun-asr-nano-2512"]
+
+    def transcribe(self, audio: np.ndarray, language: str = "auto") -> ASRResult:
+        from .fun_asr_nano_2512 import transcribe_fun_asr_nano_2512
+        text = transcribe_fun_asr_nano_2512(self._wrapper, audio, language)
+        return ASRResult(text=text)
+
+
 class FunASRNanoAdapter(ASRModel):
     """FunASR-Nano 模型适配器（自带 VAD/PUNC）。"""
 
@@ -231,6 +251,7 @@ def create_model_adapter(
         "paraformer": lambda: ParaformerAdapter(model_wrapper, models_dir),
         "funasr-nano": lambda: FunASRNanoAdapter(model_wrapper),
         "faster-whisper": lambda: FasterWhisperAdapter(model_wrapper),
+        "fun-asr-nano-2512": lambda: FunAsrNano2512Adapter(model_wrapper),
     }
 
     factory = adapters.get(model_type)

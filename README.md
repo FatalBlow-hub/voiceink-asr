@@ -78,6 +78,7 @@ python stt_server_entry.py
 | Paraformer | `paraformer` | 阿里达摩院大模型，精度高 | 高精度需求 |
 | FunASR-Nano | `funasr-nano` | 轻量级，自带 VAD/PUNC | 资源受限环境 |
 | Faster-Whisper | `faster-whisper` | CTranslate2 量化 Whisper，多语言 | 多语言 / 国际用户 |
+| Fun-ASR-Nano-2512 | `fun-asr-nano-2512` | 2025 最新 LLM-ASR，自带 VAD/PUNC | 高精度中英文 |
 
 ### VAD 语音活动检测
 
@@ -117,6 +118,7 @@ python model_downloader.py --root_dir "./models" --items '{
 | Paraformer | ModelScope | `damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch` |
 | FunASR-Nano | ModelScope | `iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch` |
 | **Faster-Whisper** | **ModelScope** | **`angelala00/faster-whisper-small`** |
+| **Fun-ASR-Nano-2512** | **ModelScope** | **`FunAudioLLM/Fun-ASR-Nano-2512`** |
 | CT-Punc (ONNX) | HuggingFace | `lovemefan/punc_ct-transformer_zh-cn-common-vocab272727-onnx` |
 | CT-Punc (PyTorch) | ModelScope | `damo/punc_ct-transformer_zh-cn-common-vocab272727-pytorch` |
 
@@ -204,7 +206,10 @@ voiceink-asr/
 │   │   ├── sensevoice_pytorch.py
 │   │   ├── paraformer.py
 │   │   ├── funasr_nano.py
-│   │   └── faster_whisper.py
+│   │   ├── faster_whisper.py
+│   │   ├── fun_asr_nano_2512.py  # Fun-ASR-Nano-2512 适配器
+│   │   ├── fun_asr_nano_compat.py # 模型兼容实现
+│   │   └── funasr_bootstrap.py   # FunASR 运行时修复
 │   ├── processors/          # 音频处理器
 │   │   ├── vad.py           # Silero VAD 语音活动检测
 │   │   ├── punc.py          # CT-Punc 标点恢复
