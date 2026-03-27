@@ -57,7 +57,7 @@ def send_response(id: int, result: Any = None, error: Dict = None) -> None:
         response["error"] = error
     else:
         response["result"] = result
-    print(json.dumps(response, ensure_ascii=False), flush=True)
+    print(json.dumps(response, ensure_ascii=False), flush=True, file=sys.__stdout__)
 
 
 def handle_init(id: int, params: Dict) -> None:

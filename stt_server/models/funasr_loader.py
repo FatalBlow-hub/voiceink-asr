@@ -23,8 +23,14 @@ def load_funasr_model(model_dir: str, device: str = "cpu") -> Optional[object]:
     try:
         # 方案 1: 尝试使用 AutoModel（正常情况）
         log("info", f"尝试使用 AutoModel 加载模型: {model_dir}")
-        from funasr import AutoModel
-        
+        import sys as _sys
+        _stdout_backup = _sys.stdout
+        _sys.stdout = _sys.stderr
+        try:
+            from funasr import AutoModel
+        finally:
+            _sys.stdout = _stdout_backup
+
         model = AutoModel(
             model=model_dir,
             trust_remote_code=True,

@@ -45,5 +45,7 @@ Thumbs.db
 WARP.md
 
 # Local models and test files
-models/
+/models/
+/model/
+/model_test1/
 *.wav
