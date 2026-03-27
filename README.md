@@ -18,9 +18,21 @@
 # 推荐使用 conda 创建虚拟环境
 conda create -n voiceink python=3.10
 conda activate voiceink
+```
 
-# 安装依赖（注意 PyTorch CPU 版本的额外索引）
+**CPU 版本（默认）：**
+
+```bash
 pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+```
+
+**GPU 版本（需要 NVIDIA 显卡 + CUDA 11.8 或 12.x）：**
+
+```bash
+# CUDA 11.8
+pip install -r requirements-gpu.txt --extra-index-url https://download.pytorch.org/whl/cu118
+# CUDA 12.1
+pip install -r requirements-gpu.txt --extra-index-url https://download.pytorch.org/whl/cu121
 ```
 
 ### 2. 下载模型
@@ -183,6 +195,7 @@ voiceink-asr/
 │   ├── models/              # ASR 模型适配器
 │   │   ├── base.py          # 抽象基类和能力声明
 │   │   ├── adapters.py      # 模型适配器工厂
+│   │   ├── funasr_loader.py # FunASR 兼容加载器
 │   │   ├── sensevoice_onnx.py
 │   │   ├── sensevoice_pytorch.py
 │   │   ├── paraformer.py
@@ -190,12 +203,18 @@ voiceink-asr/
 │   ├── processors/          # 音频处理器
 │   │   ├── vad.py           # Silero VAD 语音活动检测
 │   │   ├── punc.py          # CT-Punc 标点恢复
-│   │   └── text_processor.py
+│   │   ├── text_processor.py
+│   │   └── diarization.py   # 人声分离（延迟加载）
 │   └── utils/
+│       ├── logger.py        # 日志工具（输出到 stderr）
+│       └── audio.py         # 音频工具函数
 ├── model_downloader.py      # 模型下载工具
 ├── test_transcribe.py       # 测试脚本
 ├── stt_server_entry.py      # 服务启动入口
-├── requirements.txt
+├── requirements.txt         # CPU 版依赖
+├── requirements-gpu.txt     # GPU 版依赖
+├── download_items.sample.json
+├── .env.example
 └── README.md
 ```
 
