@@ -76,9 +76,9 @@ python stt_server_entry.py
 | SenseVoice ONNX | `sensevoice-onnx` | ONNX 量化版本，速度最快 | ⭐ CPU 环境推荐 |
 | SenseVoice PyTorch | `sensevoice-pytorch` | PyTorch 版本，支持 GPU | GPU 环境 |
 | Paraformer | `paraformer` | 阿里达摩院大模型，精度高 | 高精度需求 |
-| FunASR-Nano | `funasr-nano` | 轻量级，自带 VAD/PUNC | 资源受限环境 |
+| FunASR-Nano（旧版） | `funasr-nano` | 轻量级传统 ASR，自带 VAD/PUNC，~200MB | 资源受限环境 |
 | Faster-Whisper | `faster-whisper` | CTranslate2 量化 Whisper，多语言 | 多语言 / 国际用户 |
-| Fun-ASR-Nano-2512 | `fun-asr-nano-2512` | 2025 最新 LLM-ASR，自带 VAD/PUNC | 高精度中英文 |
+| Fun-ASR-Nano-2512（新版） | `fun-asr-nano-2512` | 2025 LLM 端到端 ASR，自带 VAD/PUNC，~2.15GB | 高精度中英文 |
 
 ### VAD 语音活动检测
 
