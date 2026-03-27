@@ -20,6 +20,8 @@ conda create -n voiceink python=3.10
 conda activate voiceink
 ```
 
+> 后续每次使用前都需要先执行 `conda activate voiceink` 激活环境，激活后才能直接使用 `python` 命令。
+
 **CPU 版本（默认）：**
 
 ```bash
