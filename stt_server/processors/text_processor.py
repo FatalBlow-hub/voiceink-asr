@@ -2,13 +2,18 @@
 """文本后处理。
 
 从 ASR 输出中做轻量、保守的清洗：
+- SenseVoice 控制标签清洗（<|zh|><|NEUTRAL|> 等）
 - 去重复（解决 SenseVoice 重复字问题）
 - 语气词过滤（保守策略）
+- 外部标点模型应用
 - Paraformer 时间戳分句：按标点进行分段
 """
 
+import logging
 import re
-from typing import Dict, List
+from typing import Any, Dict, List, Optional
+
+log = logging.getLogger(__name__)
 
 
 # ============================================================================
@@ -164,3 +169,66 @@ def split_by_punctuation(text: str, timestamps: List[List[int]]) -> List[Dict]:
         })
 
     return segments
+
+
+# ============================================================================
+# SenseVoice 标签清洗
+# ============================================================================
+
+_SENSEVOICE_TAG_RE = re.compile(r"<\|[^|>]+\|>")
+
+
+def clean_sensevoice_tags(text: str) -> str:
+    """清洗 SenseVoice 输出中的控制标签（如 <|zh|><|NEUTRAL|><|Speech|>）。
+
+    优先使用 FunASR 官方 rich_transcription_postprocess 处理（更完整），
+    若不可用则回退到正则清除。
+    """
+    if not text:
+        return text
+
+    try:
+        from funasr.utils.postprocess_utils import rich_transcription_postprocess
+        cleaned = rich_transcription_postprocess(text)
+    except Exception:
+        cleaned = _SENSEVOICE_TAG_RE.sub("", text)
+
+    return cleaned.strip()
+
+
+# ============================================================================
+# 外部标点模型应用
+# ============================================================================
+
+def extract_asr_text(result: Any) -> str:
+    """从 FunASR generate() 返回值中提取文本字符串。
+
+    兼容多种返回格式：list[dict]、list[str]、dict、str。
+    """
+    if isinstance(result, (list, tuple)):
+        if not result:
+            return ""
+        return extract_asr_text(result[0])
+    if isinstance(result, dict):
+        return str(result.get("text", ""))
+    if result is None:
+        return ""
+    return result if isinstance(result, str) else str(result)
+
+
+def apply_punctuation_model(text: str, punc_model: Optional[Any]) -> str:
+    """使用外部标点恢复模型补全标点。
+
+    punc_model 为 FunASR AutoModel 实例（CT-Punc），未提供时原样返回。
+    """
+    normalized = (text or "").strip()
+    if not normalized or punc_model is None:
+        return normalized
+
+    try:
+        result = punc_model.generate(input=normalized)
+        punctuated = extract_asr_text(result).strip()
+        return punctuated or normalized
+    except Exception as e:
+        log.warning("外部标点后处理失败，保留原始文本: %s", e)
+        return normalized

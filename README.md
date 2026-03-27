@@ -77,6 +77,7 @@ python stt_server_entry.py
 | SenseVoice PyTorch | `sensevoice-pytorch` | PyTorch 版本，支持 GPU | GPU 环境 |
 | Paraformer | `paraformer` | 阿里达摩院大模型，精度高 | 高精度需求 |
 | FunASR-Nano | `funasr-nano` | 轻量级，自带 VAD/PUNC | 资源受限环境 |
+| Faster-Whisper | `faster-whisper` | CTranslate2 量化 Whisper，多语言 | 多语言 / 国际用户 |
 
 ### VAD 语音活动检测
 
@@ -115,6 +116,7 @@ python model_downloader.py --root_dir "./models" --items '{
 | SenseVoice PyTorch | ModelScope | `iic/SenseVoiceSmall` |
 | Paraformer | ModelScope | `damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch` |
 | FunASR-Nano | ModelScope | `iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch` |
+| **Faster-Whisper** | **ModelScope** | **`angelala00/faster-whisper-small`** |
 | CT-Punc (ONNX) | HuggingFace | `lovemefan/punc_ct-transformer_zh-cn-common-vocab272727-onnx` |
 | CT-Punc (PyTorch) | ModelScope | `damo/punc_ct-transformer_zh-cn-common-vocab272727-pytorch` |
 
@@ -201,7 +203,8 @@ voiceink-asr/
 │   │   ├── sensevoice_onnx.py
 │   │   ├── sensevoice_pytorch.py
 │   │   ├── paraformer.py
-│   │   └── funasr_nano.py
+│   │   ├── funasr_nano.py
+│   │   └── faster_whisper.py
 │   ├── processors/          # 音频处理器
 │   │   ├── vad.py           # Silero VAD 语音活动检测
 │   │   ├── punc.py          # CT-Punc 标点恢复
@@ -219,6 +222,11 @@ voiceink-asr/
 ├── .env.example
 └── README.md
 ```
+
+> **Faster-Whisper 额外需要安装**：
+> ```bash
+> pip install faster-whisper==1.1.1
+> ```
 
 ## 配置
 

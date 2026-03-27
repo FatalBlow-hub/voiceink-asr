@@ -126,6 +126,11 @@ MODEL_CAPABILITIES: Dict[str, ModelCapabilities] = {
         has_builtin_punc=True,
         has_native_timestamps=False,
     ),
+    "faster-whisper": ModelCapabilities(
+        has_builtin_vad=True,
+        has_builtin_punc=False,
+        has_native_timestamps=True,
+    ),
 }
 
 

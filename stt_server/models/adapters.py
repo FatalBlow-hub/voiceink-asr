@@ -14,6 +14,7 @@ import soundfile as sf
 import torch
 
 from .base import ASRModel, ASRResult, ASRSegment, ModelCapabilities, MODEL_CAPABILITIES
+from ..processors.text_processor import clean_sensevoice_tags
 from ..utils.logger import log
 
 
@@ -84,9 +85,8 @@ class SenseVoicePyTorchAdapter(ASRModel):
             log("error", f"SenseVoice PyTorch 转写失败: {e}")
             text = ""
 
-        # 移除 SenseVoice 特殊标记: <|zh|><|NEUTRAL|><|Speech|><|withitn|> 等
         if text:
-            text = re.sub(r"<\|[^|]+\|>", "", text).strip()
+            text = clean_sensevoice_tags(text)
 
         return ASRResult(text=text)
 
@@ -131,6 +131,34 @@ class ParaformerAdapter(ASRModel):
                 pass
 
         return ASRResult(text=text)
+
+
+class FasterWhisperAdapter(ASRModel):
+    """Faster-Whisper 模型适配器。"""
+
+    def __init__(self, model_wrapper: Dict[str, Any]):
+        self._wrapper = model_wrapper
+        self._model = model_wrapper["model"]
+
+    @property
+    def model_id(self) -> str:
+        return "faster-whisper"
+
+    @property
+    def capabilities(self) -> ModelCapabilities:
+        return MODEL_CAPABILITIES["faster-whisper"]
+
+    def transcribe(self, audio: np.ndarray, language: str = "auto") -> ASRResult:
+        """转写单段音频。"""
+        from .faster_whisper import transcribe_faster_whisper_with_segments
+        text, segments = transcribe_faster_whisper_with_segments(
+            self._wrapper, audio, language
+        )
+        result_segments = [
+            ASRSegment(start=s["start"], end=s["end"], text=s["text"])
+            for s in segments
+        ]
+        return ASRResult(text=text, segments=result_segments)
 
 
 class FunASRNanoAdapter(ASRModel):
@@ -202,6 +230,7 @@ def create_model_adapter(
         "sensevoice-pytorch": lambda: SenseVoicePyTorchAdapter(model_wrapper),
         "paraformer": lambda: ParaformerAdapter(model_wrapper, models_dir),
         "funasr-nano": lambda: FunASRNanoAdapter(model_wrapper),
+        "faster-whisper": lambda: FasterWhisperAdapter(model_wrapper),
     }
 
     factory = adapters.get(model_type)

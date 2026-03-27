@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 # 模型初始化函数（保留用于并行加载）
+from .models.faster_whisper import init_faster_whisper
 from .models.funasr_nano import init_funasr_nano
 from .models.paraformer import init_paraformer
 from .models.sensevoice_onnx import init_sensevoice_onnx
@@ -95,6 +96,8 @@ def handle_init(id: int, params: Dict) -> None:
                 result = init_funasr_nano(model_dir, device)
             elif model_type == "paraformer":
                 result = init_paraformer(model_dir, device)
+            elif model_type == "faster-whisper":
+                result = init_faster_whisper(model_dir, device)
             else:
                 raise ValueError(f"不支持的模型类型: {model_type}")
             asr_time = time.time() - asr_start

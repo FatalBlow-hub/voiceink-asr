@@ -13,6 +13,10 @@ onnxruntime==1.23.2
 funasr==1.2.9
 funasr-onnx==0.4.1
 
+# Faster-Whisper (可选，仅在使用 faster-whisper 模型时需要)
+# pip install faster-whisper==1.1.1
+# faster-whisper==1.1.1
+
 # PyTorch (funasr/paraformer 需要)
 torch==2.5.1+cpu
 torchaudio==2.5.1+cpu
