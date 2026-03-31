@@ -1,10 +1,23 @@
 # VoiceInk / 声墨 - 本地语音识别服务
 
-把声音变成文字，基于 FunASR/SenseVoice 的本地语音识别服务。通过 JSON-RPC over stdio 协议与客户端通信，方便集成到各种前端应用。
+> 声墨（[VoiceLnk](https://www.voicelnk.cn/)）的开源核心引擎，基于 FunASR/SenseVoice 的本地语音识别服务。
+>
+> 官方网站：[www.voicelnk.cn](https://www.voicelnk.cn/)
+
+![声墨演示](assets/demo.gif)
+
+## 关于本项目
+
+本仓库是**声墨**语音识别的开源后端引擎：
+
+- **开源部分**：模型加载与推理（SenseVoice、Paraformer、Faster-Whisper 等）、VAD 语音活动检测、标点恢复、JSON-RPC 服务接口
+- **未开源部分**：声墨官方前端应用
+
+**想自己接入前端？** 本服务通过 JSON-RPC over stdio 与任意前端通信，自己实现一个前端直接调用即可，技术栈和风格完全自由。
 
 ## 特性
 
-- 🎯 **多模型支持**: SenseVoice ONNX/PyTorch、Paraformer、FunASR-Nano
+- 🎯 **多模型支持**: SenseVoice ONNX/PyTorch、Paraformer、Faster-Whisper、Fun-ASR-Nano-2512
 - 🔒 **完全本地**: 无需联网，数据不出本地
 - 🎨 **VAD 支持**: Silero VAD 语音活动检测，智能断句
 - ✨ **标点恢复**: CT-Punc 自动添加标点符号
@@ -39,24 +52,18 @@ pip install -r requirements-gpu.txt --extra-index-url https://download.pytorch.o
 
 ### 2. 下载模型
 
-使用 `model_downloader.py` 下载模型：
+**从 ModelScope 下载 SenseVoice PyTorch（推荐）：**
 
 ```bash
-# 下载推荐的 SenseVoice ONNX 模型
-python model_downloader.py --root_dir "./models" --items '{
-  "items": [
-    {"item": "asr", "model_id": "lovemefan/SenseVoiceSmall-onnx", "revision": "main", "source": "huggingface"}
-  ]
-}'
+pip install modelscope
+modelscope download --model iic/SenseVoiceSmall --local_dir ./models/SenseVoiceSmall
 ```
-
-或使用配置文件批量下载（参考 `download_items.sample.json`）。
 
 ### 3. 测试运行
 
 ```bash
 # 测试转写（需要准备一个 16kHz WAV 音频文件）
-python test_transcribe.py --audio test.wav --model_dir ./models/SenseVoiceSmall-onnx
+python test_transcribe.py --audio test.wav --model_dir ./models/SenseVoiceSmall
 ```
 
 ### 4. 启动服务
@@ -73,10 +80,8 @@ python stt_server_entry.py
 
 | 模型类型 | model_type | 说明 | 推荐场景 |
 |---------|------------|------|----------|
-| SenseVoice ONNX | `sensevoice-onnx` | ONNX 量化版本，速度最快 | ⭐ CPU 环境推荐 |
-| SenseVoice PyTorch | `sensevoice-pytorch` | PyTorch 版本，支持 GPU | GPU 环境 |
+| SenseVoice PyTorch | `sensevoice-pytorch` | 阿里 SenseVoice，支持 CPU/GPU | ⭐ 推荐 |
 | Paraformer | `paraformer` | 阿里达摩院大模型，精度高 | 高精度需求 |
-| ~~FunASR-Nano（已弃用）~~ | ~~`funasr-nano`~~ | 旧版适配器，已被 `fun-asr-nano-2512` 取代 | - |
 | Faster-Whisper | `faster-whisper` | CTranslate2 量化 Whisper，多语言 | 多语言 / 国际用户 |
 | Fun-ASR-Nano-2512（新版） | `fun-asr-nano-2512` | 2025 LLM 端到端 ASR，自带 VAD/PUNC，~2.15GB | 高精度中英文 |
 
@@ -97,11 +102,7 @@ python stt_server_entry.py
 
 ```bash
 # 从 HuggingFace 下载
-python model_downloader.py --root_dir "./models" --items '{
-  "items": [
-    {"item": "punc", "model_id": "lovemefan/punc_ct-transformer_zh-cn-common-vocab272727-onnx", "revision": "main", "source": "huggingface"}
-  ]
-}'
+huggingface-cli download lovemefan/punc_ct-transformer_zh-cn-common-vocab272727-onnx --local-dir ./models/punc_ct-transformer_zh-cn-common-vocab272727-onnx
 ```
 
 或从 ModelScope 下载：
@@ -113,7 +114,6 @@ python model_downloader.py --root_dir "./models" --items '{
 
 | 模型类型 | 来源 | model_id |
 |---------|------|----------|
-| SenseVoice ONNX | HuggingFace | `lovemefan/SenseVoiceSmall-onnx` |
 | SenseVoice PyTorch | ModelScope | `iic/SenseVoiceSmall` |
 | Paraformer | ModelScope | `damo/speech_paraformer-large_asr_nat-zh-cn-16k-common-vocab8404-pytorch` |
 | **Faster-Whisper** | **ModelScope** | **`angelala00/faster-whisper-small`** |
@@ -124,13 +124,9 @@ python model_downloader.py --root_dir "./models" --items '{
 ### 下载示例
 
 ```bash
-# 推荐配置：SenseVoice ONNX + CT-Punc ONNX
-python model_downloader.py --root_dir "./models" --items '{
-  "items": [
-    {"item": "asr", "model_id": "lovemefan/SenseVoiceSmall-onnx", "revision": "main", "source": "huggingface"},
-    {"item": "punc", "model_id": "lovemefan/punc_ct-transformer_zh-cn-common-vocab272727-onnx", "revision": "main", "source": "huggingface"}
-  ]
-}'
+# 推荐配置：SenseVoice PyTorch + CT-Punc ONNX
+modelscope download --model iic/SenseVoiceSmall --local_dir ./models/SenseVoiceSmall
+huggingface-cli download lovemefan/punc_ct-transformer_zh-cn-common-vocab272727-onnx --local-dir ./models/punc_ct-transformer_zh-cn-common-vocab272727-onnx
 ```
 
 ## API 接口
@@ -217,12 +213,10 @@ voiceink-asr/
 │   └── utils/
 │       ├── logger.py        # 日志工具（输出到 stderr）
 │       └── audio.py         # 音频工具函数
-├── model_downloader.py      # 模型下载工具
 ├── test_transcribe.py       # 测试脚本
 ├── stt_server_entry.py      # 服务启动入口
 ├── requirements.txt         # CPU 版依赖
 ├── requirements-gpu.txt     # GPU 版依赖
-├── download_items.sample.json
 ├── .env.example
 └── README.md
 ```
