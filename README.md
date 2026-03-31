@@ -15,9 +15,15 @@
 
 **想自己接入前端？** 本服务通过 JSON-RPC over stdio 与任意前端通信，自己实现一个前端直接调用即可，技术栈和风格完全自由。
 
+---
+
+本项目由个人开发者维护，利用业余时间学习并开发。开源后端的初衷是让有需要的开发者可以直接接入语音识别能力，而不必重复造轮；前端未开源是因为它与声墨产品本身紧密耦合，自己写一个更适合自己应用场景的前端往往更快。
+
+如果更新不及时或存在 bug，请多包涵，也欢迎提 [Issue](../../issues) 指出，非常感谢。
+
 ## 特性
 
-- 🎯 **多模型支持**: SenseVoice ONNX/PyTorch、Paraformer、Faster-Whisper、Fun-ASR-Nano-2512
+- 🎯 **多模型支持**: SenseVoice PyTorch、Paraformer、Faster-Whisper、Fun-ASR-Nano-2512
 - 🔒 **完全本地**: 无需联网，数据不出本地
 - 🎨 **VAD 支持**: Silero VAD 语音活动检测，智能断句
 - ✨ **标点恢复**: CT-Punc 自动添加标点符号
